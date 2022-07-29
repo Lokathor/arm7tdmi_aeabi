@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
-arm7tdmi_aeabi::generate_fns!();
+core::arch::global_asm!(include_str!("../src/the_code.s"), options(raw));
+
+include!("../src/fn_declarations.rs");
 
 fn rand_bytes(n: usize) -> Vec<u8> {
   let mut v = vec![0; n];
