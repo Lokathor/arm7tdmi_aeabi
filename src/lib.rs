@@ -14,12 +14,37 @@ mod fn_declarations;
 const THE_CODE_BASE: &'static str = include_str!("the_code.s");
 const FN_DECLARATIONS_BASE: &'static str = include_str!("fn_declarations.rs");
 
+#[derive(Debug, Clone, Default)]
+struct Args {
+  section_prefix: String,
+}
+
 #[proc_macro]
 pub fn generate_fns(token_stream: TokenStream) -> TokenStream {
   let mapping = parse_mapping(token_stream);
+  let args = Args {
+    section_prefix: match mapping.get("section_prefix") {
+      Some(section_prefix) => section_prefix.to_string(),
+      None => String::from(r#""""#),
+    },
+  };
 
-  let the_code = THE_CODE_BASE;
-  let fn_declarations = FN_DECLARATIONS_BASE;
+  let section_replacement = {
+    // `section_prefix` has double quotes in it, so we will let the opening one
+    // stay and match on that as part of the `replace`, then only the closing
+    // double quote has to be popped away.
+    let mut t = format!(r#".section {}"#, args.section_prefix);
+    t.pop();
+    t
+  };
+
+  let mut the_code = THE_CODE_BASE.to_string();
+  let mut fn_declarations = FN_DECLARATIONS_BASE.to_string();
+  for s in [&mut the_code, &mut fn_declarations] {
+    *s = s.replace("libc_", "");
+    *s = s.replace("aeabi_", "__aeabi_");
+    *s = s.replace(r#".section ""#, section_replacement.as_str());
+  }
 
   let out_string = format!(
     r#"
@@ -57,15 +82,15 @@ fn parse_mapping(token_stream: TokenStream) -> HashMap<String, Literal> {
       Some(TokenTree::Literal(literal)) => literal,
       other => panic!("Expected Some(Literal), got {other:?}"),
     };
-    let _comma = match tt_iter.next() {
-      Some(TokenTree::Punct(punct)) if punct.as_char() == ',' => punct,
-      None => break,
-      other => panic!("Expected Some(Punct(',')), got {other:?}"),
-    };
     let ident_string = ident.to_string();
     match hm.entry(ident_string) {
       Entry::Occupied(_) => panic!("Identifier {ident} was specified twice!"),
       Entry::Vacant(ve) => ve.insert(literal),
+    };
+    let _comma = match tt_iter.next() {
+      Some(TokenTree::Punct(punct)) if punct.as_char() == ',' => punct,
+      None => break,
+      other => panic!("Expected Some(Punct(',')), got {other:?}"),
     };
   }
   hm
