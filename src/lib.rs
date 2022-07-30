@@ -58,10 +58,10 @@ pub fn generate_fns(token_stream: TokenStream) -> TokenStream {
 
   let out_string = format!(
     r#"
-    #[cfg(not(target_feature="thumb"))]
+    #[cfg(not(target_feature="thumb-mode"))]
     ::core::arch::global_asm!({the_code:?}, options(raw));
 
-    #[cfg(target_feature="thumb")]
+    #[cfg(target_feature="thumb-mode")]
     ::core::arch::global_asm!(
       ".code 32",
       {the_code:?},
