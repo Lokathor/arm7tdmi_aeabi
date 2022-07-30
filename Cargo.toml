@@ -7,7 +7,7 @@ edition = "2021"
 keywords = ["arm7tdmi", "armv4t", "thumbv4t"]
 categories = ["embedded", "no-std"]
 # main license is CCO, the other two are provided for maximum comaptibility with other Rust code.
-license = "CCO-1.0 OR Apache-2.0 OR MIT"
+license = "CC0-1.0 OR Apache-2.0 OR MIT"
 
 [dependencies]
 # none!
