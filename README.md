@@ -78,16 +78,13 @@ more efficient, so use them when possible).
 
 ## Use
 
-Unfortunately, crates can't specify what link section they want a *dependency's*
-code to use. Since my main use for this assembly is to have it in a special
-section on the GBA so that the code is in RAM at runtime, I can't just publish
-it to crates.io and then use it as a normal dependency and have it go where I
-want. Or, I could, but then no one *else* could use it outside of that specific
-GBA context, which is also not great.
+Put this somewhere in your project:
 
-In the future this crate will be published as a proc-macro that accepts a
-section name and emits a `global_asm!` with the right contents. Until then, if
-you want to use these functions just vendor the files into your project.
+```rust
+arm7tdmi_aeabi::generate_fns!(section_prefix = ".iwram");
+```
+
+You can adjust the section_prefix as you like, `.iwram` is used on the GBA.
 
 ## Testing
 
