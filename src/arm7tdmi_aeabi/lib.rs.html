@@ -173,10 +173,10 @@
 
   <span class="kw">let</span> <span class="ident">out_string</span> <span class="op">=</span> <span class="macro">format!</span>(
     <span class="string">r#&quot;
-    #[cfg(not(target_feature=&quot;thumb-mode&quot;))]
+    #[cfg(all(target_arch=&quot;arm&quot;, not(target_feature=&quot;thumb-mode&quot;)))]
     ::core::arch::global_asm!({the_code:?}, options(raw));
 
-    #[cfg(target_feature=&quot;thumb-mode&quot;)]
+    #[cfg(all(target_arch=&quot;arm&quot;, target_feature=&quot;thumb-mode&quot;))]
     ::core::arch::global_asm!(
       &quot;.code 32&quot;,
       {the_code:?},
