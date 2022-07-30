@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["fn_declarations","This holds all the `extern \"C\"` declarations for the assembly code that the crate can provide."]]};
+window.SIDEBAR_ITEMS = {"macro":[["generate_fns",""]]};
