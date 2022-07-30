@@ -22,7 +22,7 @@ struct Args {
 #[proc_macro]
 pub fn generate_fns(token_stream: TokenStream) -> TokenStream {
   let mapping = parse_mapping(token_stream);
-  println!("MAPPING: {mapping:?}");
+  //println!("MAPPING: {mapping:?}");
 
   let args = Args {
     section_prefix: match mapping.get("section_prefix") {
@@ -35,7 +35,7 @@ pub fn generate_fns(token_stream: TokenStream) -> TokenStream {
       None => String::from(r#""""#),
     },
   };
-  println!("ARGS: {args:?}");
+  //println!("ARGS: {args:?}");
 
   let section_replacement = {
     // `section_prefix` uses a string literal,
@@ -72,7 +72,7 @@ pub fn generate_fns(token_stream: TokenStream) -> TokenStream {
     {fn_declarations}
     "#
   );
-  println!("===OUT_STRING===\n{out_string}===END===");
+  //println!("===OUT_STRING===\n{out_string}===END===");
 
   out_string.parse().unwrap()
 }
