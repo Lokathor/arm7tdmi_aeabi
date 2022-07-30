@@ -1,13 +1,11 @@
 [package]
 name = "arm7tdmi_aeabi"
-version = "0.1.4"
+version = "0.2.0"
 edition = "2021"
 keywords = ["arm7tdmi", "armv4t", "thumbv4t"]
 categories = ["embedded", "no-std"]
 # main license is CCO, the other two are provided for maximum comaptibility with other Rust code.
 license = "CCO OR Apache-2.0 OR MIT"
-
-publish = false # temporary!
 
 [dependencies]
 # none yet
