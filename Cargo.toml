@@ -1,5 +1,7 @@
 [package]
 name = "arm7tdmi_aeabi"
+description = "proc-macro to put aeabi functions into your code"
+repository = "https://github.com/Lokathor/arm7tdmi_aeabi"
 version = "0.2.0"
 edition = "2021"
 keywords = ["arm7tdmi", "armv4t", "thumbv4t"]
@@ -8,7 +10,7 @@ categories = ["embedded", "no-std"]
 license = "CCO OR Apache-2.0 OR MIT"
 
 [dependencies]
-# none yet
+# none!
 
 [dev-dependencies]
 getrandom = "0.2"
