@@ -24,14 +24,20 @@ pub fn generate_fns(token_stream: TokenStream) -> TokenStream {
   let mapping = parse_mapping(token_stream);
   let args = Args {
     section_prefix: match mapping.get("section_prefix") {
-      Some(section_prefix) => section_prefix.to_string(),
+      Some(section_prefix) => {
+        let s = section_prefix.to_string();
+        assert!(s.starts_with('"'), "section_prefix must be a string literal");
+        assert!(s.ends_with('"'), "section_prefix must be a string literal");
+        s
+      },
       None => String::from(r#""""#),
     },
   };
 
   let section_replacement = {
-    // `section_prefix` has double quotes in it, so we will let the opening one
-    // stay and match on that as part of the `replace`, then only the closing
+    // `section_prefix` uses a string literal,
+    // which has double quotes in it. We'll keep the opening one,
+    // and match on that as part of the `replace`, then only the closing
     // double quote has to be popped away.
     let mut t = format!(r#".section {}"#, args.section_prefix);
     t.pop();
@@ -41,6 +47,7 @@ pub fn generate_fns(token_stream: TokenStream) -> TokenStream {
   let mut the_code = THE_CODE_BASE.to_string();
   let mut fn_declarations = FN_DECLARATIONS_BASE.to_string();
   for s in [&mut the_code, &mut fn_declarations] {
+    // *s = s.replace("\r\n", "\n");
     *s = s.replace("libc_", "");
     *s = s.replace("aeabi_", "__aeabi_");
     *s = s.replace(r#".section ""#, section_replacement.as_str());
