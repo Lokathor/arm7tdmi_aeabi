@@ -61,11 +61,12 @@ aeabi_memcpy:
     bmi    .L_f_copy_max_coalign1
     bcs    .L_f_copy_max_coalign2
     @ else fallthrough
-aeabi_memcpy8:
-aeabi_memcpy4:
   .L_f_copy_max_coalign4:
     tst    r0, #3
     bne    .L_f_copy_fixup4
+    @ else fallthrough
+aeabi_memcpy8:
+aeabi_memcpy4:
   .L_f_copy_coalign4_assured:
     cmp    r2, #32
     bge    .L_f_copy_block
