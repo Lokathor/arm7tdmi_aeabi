@@ -29,7 +29,6 @@
 .global aeabi_idivmod
 .global aeabi_uidivmod
 .global aeabi_idiv0
-.global aeabi_ldiv0
 
 .section ".text.libc.memcpy"
 libc_memcpy:
