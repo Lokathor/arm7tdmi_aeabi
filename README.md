@@ -101,7 +101,7 @@ probably test natively I guess.
 
 ## License
 
-All the code here is released under `CCO`.
+All the code here is released under `CC0-1.0`.
 
 OR (if you really want to use the standard Rust project licenses) `Apache-2.0` OR
 `MIT` can also be used.
