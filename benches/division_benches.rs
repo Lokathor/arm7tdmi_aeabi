@@ -35,7 +35,9 @@ fn bench_a_div_rem_fn(f: fn(u32, u32) -> (u32, u32)) {
     {
       let expected = (num / denom, num % denom);
       let actual = f(num, denom);
-      assert_eq!(expected, actual);
+      assert_eq!(expected, actual,
+        "\nduo: {num: >15},\ndiv: {denom: >15},\nexpected: {expected:?},\nactual: {actual:?}"
+      );
     }
   }
   let mut lcg = Lcg::new();
