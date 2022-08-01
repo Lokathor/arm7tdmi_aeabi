@@ -6,7 +6,7 @@ version = "0.2.0"
 edition = "2021"
 keywords = ["arm7tdmi", "armv4t", "thumbv4t"]
 categories = ["embedded", "no-std"]
-# main license is CCO, the other two are provided for maximum comaptibility with other Rust code.
+# main license is CC0, the other two are provided for maximum comaptibility with other Rust code.
 license = "CC0-1.0 OR Apache-2.0 OR MIT"
 
 [dependencies]
@@ -15,6 +15,11 @@ license = "CC0-1.0 OR Apache-2.0 OR MIT"
 [dev-dependencies]
 getrandom = "0.2"
 bytemuck = "1"
+criterion = "0.3"
 
 [lib]
 #proc-macro = true
+
+[[bench]]
+name = "division_benches"
+harness = false

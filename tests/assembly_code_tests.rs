@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+#![cfg(target_arch = "arm")]
 
 core::arch::global_asm!(include_str!("../src/the_code.s"), options(raw));
 
