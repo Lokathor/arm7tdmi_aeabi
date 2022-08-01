@@ -356,3 +356,155 @@ pub fn u32_div_rem_8(duo: u32, div: u32) -> (u32, u32) {
   // unpack
   return ((duo & mask) | quo, duo >> shl);
 }
+
+#[cfg(target_arch = "arm")]
+core::arch::global_asm!(
+  r#".section ".text.aeabi.idiv"
+  aeabi_idiv:
+      cmp   r1, #0
+      beq   aeabi_idiv0
+      push  {r4, lr}
+      eor   r4, r1, r0
+      cmp   r0, #0
+      rsblt r0, r0, #0
+      cmp   r1, #0
+      rsclt r1, r1, #0
+      bl    .L_aeabi_uidiv_skip_zero_check
+      cmp   r4, #0
+      rsblt r0, r0, #0
+      pop   {r4, lr}
+      bx    lr
+  .previous
+  
+  .section ".text.aeabi.uidiv"
+  aeabi_uidiv: @ r0=num, r1=denom
+      cmp   r1, #0
+      beq   aeabi_idiv0
+    .L_aeabi_uidiv_skip_zero_check:
+      mov   r3, r1         @ r3(shifted_denom) = denom
+      cmp   r3, r0, lsr #1
+    2: @ left shift loop to line up m-s-bit of num and denom
+      lslls r3, r3, #1     @ if shifted_denom < (num>>1): shifted_denom =<< 1;
+      cmp   r3, r0, lsr #1
+      bls   2b
+      mov   r2, #0         @ r0=num, r1=denom, r2=quot(init 0), r3=shifted_denom
+    3: @ subtraction loop
+      cmp   r0, r3
+      subcs r0, r0, r3     @ if no_underflow(num-shifted_denom): num -= shifted_denom;
+      adc   r2, r2, r2     @ quot = 2*quot + no_underflow(num-shifted_denom)
+      mov   r3, r3, lsr #1 @ shifted_denom >>= 1;
+      cmp   r3, r1
+      bcs   3b             @ if no_underflow(shifted_denom - denom): continue
+      mov   r0, r2
+      bx    lr
+  .previous
+  
+  .section ".text.aeabi.idivmod"
+  aeabi_idivmod:
+      cmp   r1, #0
+      beq   aeabi_idiv0
+      push  {r4, r5, lr} @ temporarily mis-aligned stack!
+      movs  r4, r0       @ store real num
+      rsblt r0, r0, #0   @ num = abs(num)
+      movs  r5, r1       @ store real denom
+      rsblt r1, r1, #0   @ denom = abs(denom)
+      bl    .L_aeabi_uidivmod_skip_zero_check
+      eors  r12, r4, r5  @ num_sign != denom_sign: quot is negative
+      rsblt r0, r0, #0
+      cmp   r4, #0       @ num < 0: rem is neg
+      rsblt r1, r1, #0
+      pop   {r4, r5, lr}
+      bx    lr
+  .previous
+  
+  .section ".text.aeabi.uidivmod"
+  aeabi_uidivmod: @ r0=num, r1=denom
+      cmp   r1, #0
+      beq   aeabi_idiv0
+    .L_aeabi_uidivmod_skip_zero_check:
+      mov   r12, r0 @ r12=num
+      push  {r1, lr} @ ASSUMES UIDIV DOES NOT USE REGISTER 12!
+      bl    .L_aeabi_uidiv_skip_zero_check @ r0=quot
+      pop   {r1, lr}
+      mul   r2, r0, r1 @ r2=quot*denom
+      sub   r1, r12, r2 @ r1=num-(quot*denom)
+      bx    lr
+  .previous
+  
+  .section ".text.aeabi.idiv0"
+  aeabi_idiv0:
+      mov r1, r0
+      mov r0, #0
+      bx  lr
+  .previous
+"#,
+  options(raw)
+);
+
+extern "C" {
+  /// Performs `i32 / i32` division.
+  ///
+  /// This is part of the AEABI [integer division][aeabi-int-div] API.
+  ///
+  /// [aeabi-int-div]: https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
+  ///
+  /// * If `denominator` is 0, then the return value is 0.
+  ///
+  /// ## Safety
+  /// * This is safe for all possible input values, Rust just has no simple way
+  ///   to declare that an `extern "C"` function is always safe.
+  pub fn aeabi_idiv(numerator: i32, denominator: i32) -> i32;
+
+  /// Performs `u32 / u32` division.
+  ///
+  /// This is part of the AEABI [integer division][aeabi-int-div] API.
+  ///
+  /// [aeabi-int-div]: https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
+  ///
+  /// * If `denominator` is 0, then the return value is 0.
+  ///
+  /// ## Safety
+  /// * This is safe for all possible input values, Rust just has no simple way
+  ///   to declare that an `extern "C"` function is always safe.
+  pub fn aeabi_uidiv(numerator: u32, denominator: u32) -> u32;
+
+  /// Performs `[i32 / i32, i32 % i32]`, returning the data packed in a `u64`.
+  ///
+  /// The return value is stored in the `r0` and `r1` registers. For ABI
+  /// reasons, the only way that we can get an Rust `extern "C"` function
+  /// declaration to grab both of those registers as the return value is to
+  /// declare the return type as a 64-bit integer. The quotent will be the lower
+  /// 32 bits, and the remainder will be the upper 32 bits.
+  ///
+  /// This is part of the AEABI [integer division][aeabi-int-div] API.
+  ///
+  /// [aeabi-int-div]:
+  ///     https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
+  ///
+  /// * If `denominator` is 0, then the return value is `[0, numerator]`.
+  ///
+  /// ## Safety
+  /// * This is safe for all possible input values, Rust just has no simple way
+  ///   to declare that an `extern "C"` function is always safe.
+  pub fn aeabi_idivmod(numerator: i32, denominator: i32) -> u64;
+
+  /// Performs `[u32 / u32, u32 % u32]`, returning the data packed in a `u64`.
+  ///
+  /// The return value is stored in the `r0` and `r1` registers. For ABI
+  /// reasons, the only way that we can get an Rust `extern "C"` function
+  /// declaration to grab both of those registers as the return value is to
+  /// declare the return type as a 64-bit integer. The quotent will be the lower
+  /// 32 bits, and the remainder will be the upper 32 bits.
+  ///
+  /// This is part of the AEABI [integer division][aeabi-int-div] API.
+  ///
+  /// [aeabi-int-div]:
+  ///     https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst#integer-32-32-32-division-functions
+  ///
+  /// * If `denominator` is 0, then the return value is `[0, numerator]`.
+  ///
+  /// ## Safety
+  /// * This is safe for all possible input values, Rust just has no simple way
+  ///   to declare that an `extern "C"` function is always safe.
+  pub fn aeabi_uidivmod(numerator: u32, denominator: u32) -> u64;
+}

@@ -46,34 +46,44 @@ fn bench_a_div_rem_fn(f: fn(u32, u32) -> (u32, u32)) {
   }
 }
 #[bench]
-fn test_u32_div_rem_1(b: &mut Bencher) {
+fn bench_u32_div_rem_1(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_1))
 }
 #[bench]
-fn test_u32_div_rem_2(b: &mut Bencher) {
+fn bench_u32_div_rem_2(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_2))
 }
 #[bench]
-fn test_u32_div_rem_3(b: &mut Bencher) {
+fn bench_u32_div_rem_3(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_3))
 }
 #[bench]
-fn test_u32_div_rem_4(b: &mut Bencher) {
+fn bench_u32_div_rem_4(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_4))
 }
 #[bench]
-fn test_u32_div_rem_5(b: &mut Bencher) {
+fn bench_u32_div_rem_5(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_5))
 }
 #[bench]
-fn test_u32_div_rem_6(b: &mut Bencher) {
+fn bench_u32_div_rem_6(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_6))
 }
 #[bench]
-fn test_u32_div_rem_7(b: &mut Bencher) {
+fn bench_u32_div_rem_7(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_7))
 }
 #[bench]
-fn test_u32_div_rem_8(b: &mut Bencher) {
+fn bench_u32_div_rem_8(b: &mut Bencher) {
   b.iter(|| bench_a_div_rem_fn(u32_div_rem_8))
+}
+#[bench]
+#[cfg(target_arch = "arm")]
+fn bench_aeabi_uidivmod_x(b: &mut Bencher) {
+  fn aeabi_uidivmod_x(num: u32, denom: u32) -> (u32, u32) {
+    unsafe {
+      core::mem::transmute::<u64, (u32, u32)>(aeabi_uidivmod(num, denom))
+    }
+  }
+  b.iter(|| bench_a_div_rem_fn(aeabi_uidivmod_x))
 }
