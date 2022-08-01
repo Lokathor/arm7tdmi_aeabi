@@ -17,4 +17,4 @@ getrandom = "0.2"
 bytemuck = "1"
 
 [lib]
-proc-macro = true
+#proc-macro = true
