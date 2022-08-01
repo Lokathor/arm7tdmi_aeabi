@@ -19,6 +19,7 @@ fn u32_normalization_shift(duo: u32, divisor: u32) -> usize {
   shl
 }
 
+#[inline(never)]
 pub fn u32_div_rem_1(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   // handle edge cases before calling `u32_normalization_shift`
@@ -49,6 +50,7 @@ pub fn u32_div_rem_1(duo: u32, div: u32) -> (u32, u32) {
   }
 }
 
+#[inline(never)]
 pub fn u32_div_rem_2(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   // handle edge cases before calling `32ormalization_shift`
@@ -78,6 +80,7 @@ pub fn u32_div_rem_2(duo: u32, div: u32) -> (u32, u32) {
   }
 }
 
+#[inline(never)]
 pub fn u32_div_rem_3(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   // handle edge cases before calling `32ormalization_shift`
@@ -126,6 +129,7 @@ pub fn u32_div_rem_3(duo: u32, div: u32) -> (u32, u32) {
   return (quo, duo >> shl);
 }
 
+#[inline(never)]
 pub fn u32_div_rem_4(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   if div == 0 {
@@ -178,6 +182,7 @@ pub fn u32_div_rem_4(duo: u32, div: u32) -> (u32, u32) {
   return ((duo & mask) | quo, duo >> shl);
 }
 
+#[inline(never)]
 pub fn u32_div_rem_5(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   if div == 0 {
@@ -204,6 +209,7 @@ pub fn u32_div_rem_5(duo: u32, div: u32) -> (u32, u32) {
   return (quo, duo);
 }
 
+#[inline(never)]
 pub fn u32_div_rem_6(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   if div == 0 {
@@ -257,6 +263,7 @@ pub fn u32_div_rem_6(duo: u32, div: u32) -> (u32, u32) {
   return ((duo & mask) | quo, duo >> shl);
 }
 
+#[inline(never)]
 pub fn u32_div_rem_7(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   if div == 0 {
@@ -294,6 +301,7 @@ pub fn u32_div_rem_7(duo: u32, div: u32) -> (u32, u32) {
   }
 }
 
+#[inline(never)]
 pub fn u32_div_rem_8(duo: u32, div: u32) -> (u32, u32) {
   let mut duo = duo;
   if div == 0 {
