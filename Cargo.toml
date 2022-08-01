@@ -15,11 +15,6 @@ license = "CC0-1.0 OR Apache-2.0 OR MIT"
 [dev-dependencies]
 getrandom = "0.2"
 bytemuck = "1"
-criterion = "0.3"
 
 [lib]
 #proc-macro = true
-
-[[bench]]
-name = "division_benches"
-harness = false

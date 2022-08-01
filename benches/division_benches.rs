@@ -1,19 +1,8 @@
 #![allow(unused_parens)]
+#![feature(test)]
 
-use criterion::{criterion_group, criterion_main, Criterion};
-
-criterion_group!(
-  benches,
-  test_u32_div_rem_1,
-  test_u32_div_rem_2,
-  test_u32_div_rem_3,
-  test_u32_div_rem_4,
-  test_u32_div_rem_5,
-  test_u32_div_rem_6,
-  test_u32_div_rem_7,
-  test_u32_div_rem_8
-);
-criterion_main!(benches);
+extern crate test;
+use test::Bencher;
 
 include!("../src/division_fns.rs");
 
@@ -56,51 +45,35 @@ fn bench_a_div_rem_fn(f: fn(u32, u32) -> (u32, u32)) {
     assert_eq!(expected, actual);
   }
 }
-
-fn test_u32_div_rem_1(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_1", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_1))
-  });
+#[bench]
+fn test_u32_div_rem_1(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_1))
 }
-
-fn test_u32_div_rem_2(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_2", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_2))
-  });
+#[bench]
+fn test_u32_div_rem_2(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_2))
 }
-
-fn test_u32_div_rem_3(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_3", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_3))
-  });
+#[bench]
+fn test_u32_div_rem_3(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_3))
 }
-
-fn test_u32_div_rem_4(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_4", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_4))
-  });
+#[bench]
+fn test_u32_div_rem_4(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_4))
 }
-
-fn test_u32_div_rem_5(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_5", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_5))
-  });
+#[bench]
+fn test_u32_div_rem_5(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_5))
 }
-
-fn test_u32_div_rem_6(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_6", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_6))
-  });
+#[bench]
+fn test_u32_div_rem_6(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_6))
 }
-
-fn test_u32_div_rem_7(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_7", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_7))
-  });
+#[bench]
+fn test_u32_div_rem_7(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_7))
 }
-
-fn test_u32_div_rem_8(c: &mut Criterion) {
-  c.bench_function("u32_div_rem_8", |b| {
-    b.iter(|| bench_a_div_rem_fn(u32_div_rem_8))
-  });
+#[bench]
+fn test_u32_div_rem_8(b: &mut Bencher) {
+  b.iter(|| bench_a_div_rem_fn(u32_div_rem_8))
 }
