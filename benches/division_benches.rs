@@ -6,6 +6,11 @@ use test::Bencher;
 
 include!("../src/division_fns.rs");
 
+#[cfg(target_arch = "arm")]
+core::arch::global_asm!(include_str!("../src/the_code.s"), options(raw));
+#[cfg(target_arch = "arm")]
+include!("../src/fn_declarations.rs");
+
 fn rand_u32() -> u32 {
   let mut bytes = [0; 4];
   getrandom::getrandom(&mut bytes).unwrap();
