@@ -1,4 +1,6 @@
-fn u32_normalization_shift(duo: u32, divisor: u32) -> usize {
+
+#[allow(dead_code)]
+fn u32_normalization_shift_compiler_builtins(duo: u32, divisor: u32) -> usize {
   let mut shl: usize;
   {
     let mut test = duo;
@@ -17,6 +19,20 @@ fn u32_normalization_shift(duo: u32, divisor: u32) -> usize {
     }
   }
   shl
+}
+
+#[allow(dead_code)]
+fn u32_normalization_shift_rust_version_of_inline_asm(duo: u32, mut div: u32) -> usize {
+  let mut count = 0;
+  while div <= (duo >> 1) {
+    div <<= 1;
+    count += 1;
+  }
+  count
+}
+
+fn u32_normalization_shift(duo: u32, divisor: u32) -> usize {
+  u32_normalization_shift_compiler_builtins(duo, divisor)
 }
 
 #[inline(never)]
